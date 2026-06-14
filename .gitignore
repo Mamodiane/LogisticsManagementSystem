@@ -1,0 +1,14 @@
+# .NET
+bin/
+obj/
+.vs/
+
+# Visual Studio
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Environment
+.env
