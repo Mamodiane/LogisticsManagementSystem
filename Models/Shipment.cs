@@ -40,5 +40,8 @@ namespace LogisticsManagementSystem.Models
         public int? DriverId { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+        public ICollection<ShipmentStatusHistory> StatusHistory { get; set; }
+            = new List<ShipmentStatusHistory>();
     }
 }
