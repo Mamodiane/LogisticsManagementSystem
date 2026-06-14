@@ -40,11 +40,20 @@ namespace LogisticsManagementSystem.Repositories
 
             await _context.Shipments.AddAsync(shipment);
             await _context.SaveChangesAsync();
+
+            await AddStatusHistoryAsync(
+                shipment.Id,
+                shipment.Status,
+                "Shipment created"
+            );
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateShipmentAsync(Shipment shipment)
         {
             var existingShipment = await _context.Shipments.FindAsync(shipment.Id);
+            var oldStatus = existingShipment.Status;
 
             if (existingShipment == null)
             {
@@ -63,6 +72,15 @@ namespace LogisticsManagementSystem.Repositories
             existingShipment.Status = shipment.Status;
             existingShipment.DriverId = shipment.DriverId;
 
+            if (oldStatus != shipment.Status)
+            {
+                await AddStatusHistoryAsync(
+                    existingShipment.Id,
+                    shipment.Status,
+                    $"Status changed from {oldStatus} to {shipment.Status}"
+                );
+            }
+
             await _context.SaveChangesAsync();
         }
 
@@ -77,6 +95,23 @@ namespace LogisticsManagementSystem.Repositories
 
             _context.Shipments.Remove(shipment);
             await _context.SaveChangesAsync();
+        }
+
+
+        private async Task AddStatusHistoryAsync(
+        int shipmentId,
+        ShipmentStatus status,
+        string notes)
+        {
+            var history = new ShipmentStatusHistory
+            {
+                ShipmentId = shipmentId,
+                Status = status,
+                Notes = notes,
+                ChangedAt = DateTime.UtcNow
+            };
+
+            await _context.ShipmentStatusHistories.AddAsync(history);
         }
     }
 }
