@@ -11,5 +11,8 @@ namespace LogisticsManagementSystem.Repositories
         Task DeleteDriverAsync(int id);
 
         Task<IEnumerable<Shipment>> GetAssignedShipmentsAsync(int driverId);
+        Task MarkShipmentAsCollectedAsync(int driverId, int shipmentId);
+        Task MarkShipmentAsInTransitAsync(int driverId, int shipmentId);
+        Task MarkShipmentAsDeliveredAsync(int driverId, int shipmentId);
     }
 }

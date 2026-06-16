@@ -69,5 +69,27 @@ namespace LogisticsManagementSystem.Controllers
             await _driverRepository.DeleteDriverAsync(id);
             return NoContent();
         }
+
+        // Mark shipment as collected
+        [HttpPut("{driverId}/shipments/{shipmentId}/collect")]
+        public async Task<IActionResult> MarkShipmentAsCollected(int driverId, int shipmentId)
+        {
+            await _driverRepository.MarkShipmentAsCollectedAsync(driverId, shipmentId);
+            return NoContent();
+        }
+        // Mark shipment as in transit
+        [HttpPut("{driverId}/shipments/{shipmentId}/in-transit")]
+        public async Task<IActionResult> MarkShipmentAsInTransit(int driverId, int shipmentId)
+        {
+            await _driverRepository.MarkShipmentAsInTransitAsync(driverId, shipmentId);
+            return NoContent();
+        }
+        // Mark shipment as delivered
+        [HttpPut("{driverId}/shipments/{shipmentId}/deliver")]
+        public async Task<IActionResult> MarkShipmentAsDelivered(int driverId, int shipmentId)
+        {
+            await _driverRepository.MarkShipmentAsDeliveredAsync(driverId, shipmentId);
+            return NoContent();
+        }
     }
 }
