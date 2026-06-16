@@ -21,7 +21,10 @@ namespace LogisticsManagementSystem.Repositories
 
         public async Task<Shipment?> GetShipmentByIdAsync(int id)
         {
-            return await _context.Shipments.FindAsync(id);
+            return await _context.Shipments
+                .Include(s => s.Driver)
+                .Include(s => s.StatusHistory)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<Shipment?> GetShipmentByTrackingNumberAsync(string trackingNumber)
@@ -112,6 +115,34 @@ namespace LogisticsManagementSystem.Repositories
             };
 
             await _context.ShipmentStatusHistories.AddAsync(history);
+        }
+
+        public async Task AssignDriverAsync(int shipmentId, int driverId)
+        {
+            var shipment = await _context.Shipments.FindAsync(shipmentId);
+
+            if (shipment == null)
+            {
+                throw new KeyNotFoundException($"Shipment with id {shipmentId} was not found.");
+            }
+
+            var driver = await _context.Drivers.FindAsync(driverId);
+
+            if (driver == null)
+            {
+                throw new KeyNotFoundException($"Driver with id {driverId} was not found.");
+            }
+
+            shipment.DriverId = driverId;
+            shipment.Status = ShipmentStatus.Assigned;
+
+            await AddStatusHistoryAsync(
+                shipment.Id,
+                shipment.Status,
+                $"Driver {driver.FullName} assigned to shipment"
+            );
+
+            await _context.SaveChangesAsync();
         }
     }
 }

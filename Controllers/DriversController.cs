@@ -35,6 +35,15 @@ namespace LogisticsManagementSystem.Controllers
             return Ok(driver);
         }
 
+        //get assigned shipments for a driver
+        [HttpGet("{driverId}/shipments")]
+        public async Task<ActionResult<IEnumerable<Shipment>>> GetAssignedShipments(int driverId)
+        {
+            var shipments = await _driverRepository.GetAssignedShipmentsAsync(driverId);
+
+            return Ok(shipments);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Driver>> CreateDriver(Driver driver)
         {

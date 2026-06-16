@@ -10,5 +10,7 @@ namespace LogisticsManagementSystem.Repositories
         Task AddShipmentAsync(Shipment shipment);
         Task UpdateShipmentAsync(Shipment shipment);
         Task DeleteShipmentAsync(int id);
+
+        Task AssignDriverAsync(int shipmentId, int driverId);
     }
 }

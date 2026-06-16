@@ -84,5 +84,13 @@ namespace LogisticsManagementSystem.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{shipmentId}/assign-driver/{driverId}")]
+        public async Task<IActionResult> AssignDriver(int shipmentId, int driverId)
+        {
+            await _shipmentRepository.AssignDriverAsync(shipmentId, driverId);
+
+            return NoContent();
+        }
     }
 }

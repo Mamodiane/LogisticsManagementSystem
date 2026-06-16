@@ -9,5 +9,7 @@ namespace LogisticsManagementSystem.Repositories
         Task AddDriverAsync(Driver driver);
         Task UpdateDriverAsync(Driver driver);
         Task DeleteDriverAsync(int id);
+
+        Task<IEnumerable<Shipment>> GetAssignedShipmentsAsync(int driverId);
     }
 }

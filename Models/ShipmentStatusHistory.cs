@@ -1,4 +1,5 @@
 using LogisticsManagementSystem.Enums;
+using System.Text.Json.Serialization;
 
 namespace LogisticsManagementSystem.Models
 {
@@ -14,6 +15,7 @@ namespace LogisticsManagementSystem.Models
 
         public DateTime ChangedAt { get; set; } = DateTime.UtcNow;
 
+        [JsonIgnore]
         public Shipment? Shipment { get; set; }
     }
 }

@@ -58,5 +58,12 @@ namespace LogisticsManagementSystem.Repositories
             _context.Drivers.Remove(driver);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Shipment>> GetAssignedShipmentsAsync(int driverId)
+        {
+            return await _context.Shipments
+                .Where(s => s.DriverId == driverId)
+                .ToListAsync();
+        }
     }
 }
