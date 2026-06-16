@@ -7,7 +7,10 @@ namespace LogisticsManagementSystem.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ShipmentsController : ControllerBase
+
     {
+
+
         private readonly IShipmentRepository _shipmentRepository;
 
         public ShipmentsController(IShipmentRepository shipmentRepository)

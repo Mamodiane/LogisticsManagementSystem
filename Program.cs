@@ -17,6 +17,7 @@ builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IDriverRepository, DriverRepository>();
 
 var app = builder.Build();
 
