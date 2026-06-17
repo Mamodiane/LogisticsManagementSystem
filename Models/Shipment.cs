@@ -45,5 +45,8 @@ namespace LogisticsManagementSystem.Models
 
         public ICollection<ShipmentStatusHistory> StatusHistory { get; set; }
             = new List<ShipmentStatusHistory>();
+
+        public ICollection<AddressChangeRequest> AddressChangeRequests { get; set; }
+    = new List<AddressChangeRequest>();
     }
 }

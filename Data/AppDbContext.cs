@@ -13,5 +13,7 @@ namespace LogisticsManagementSystem.Data
         public DbSet<Shipment> Shipments { get; set; }
         public DbSet<ShipmentStatusHistory> ShipmentStatusHistories { get; set; }
         public DbSet<Driver> Drivers { get; set; }
+        //
+        public DbSet<AddressChangeRequest> AddressChangeRequests { get; set; }
     }
 }
