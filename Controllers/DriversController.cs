@@ -113,5 +113,13 @@ namespace LogisticsManagementSystem.Controllers
 
                 return NoContent();
          }
+
+        //
+        [HttpPut("{driverId}/shipments/{shipmentId}/return")]
+        public async Task<IActionResult> MarkShipmentAsReturned(int driverId, int shipmentId)
+        {
+            await _driverRepository.MarkShipmentAsReturnedAsync(driverId, shipmentId);
+            return NoContent();
+        }
     }
 }

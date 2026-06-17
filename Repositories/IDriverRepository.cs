@@ -20,5 +20,8 @@ namespace LogisticsManagementSystem.Repositories
 
         // Mark shipment as failed delivery
         Task MarkShipmentAsFailedDeliveryAsync(int driverId, int shipmentId, string reason);
+
+        // Mark shipment as returned
+        Task MarkShipmentAsReturnedAsync(int driverId, int shipmentId);
     }
 }

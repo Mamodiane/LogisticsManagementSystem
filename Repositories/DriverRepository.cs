@@ -184,5 +184,32 @@ namespace LogisticsManagementSystem.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+        //Return shipment
+        public async Task MarkShipmentAsReturnedAsync(int driverId, int shipmentId)
+        {
+            var shipment = await _context.Shipments
+                .FirstOrDefaultAsync(s => s.Id == shipmentId && s.DriverId == driverId);
+
+            if (shipment == null)
+            {
+                throw new KeyNotFoundException("Shipment not found or not assigned to this driver.");
+            }
+
+            if (shipment.Status != ShipmentStatus.FailedDelivery)
+            {
+                throw new InvalidOperationException("Only failed deliveries can be returned.");
+            }
+
+            shipment.Status = ShipmentStatus.Returned;
+
+            await AddStatusHistoryAsync(
+                shipment.Id,
+                shipment.Status,
+                $"Driver {driverId} marked shipment as Returned"
+            );
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
