@@ -1,6 +1,7 @@
 using LogisticsManagementSystem.Models;
 using LogisticsManagementSystem.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using LogisticsManagementSystem.DTOs;
 
 namespace LogisticsManagementSystem.Controllers
 {
@@ -91,5 +92,26 @@ namespace LogisticsManagementSystem.Controllers
             await _driverRepository.MarkShipmentAsDeliveredAsync(driverId, shipmentId);
             return NoContent();
         }
+
+        //
+        [HttpPut("{driverId}/shipments/{shipmentId}/fail")]
+        public async Task<IActionResult> MarkShipmentAsFailedDelivery(
+        int driverId,
+        int shipmentId,
+        FailedDeliveryRequest request)
+         {
+                if (string.IsNullOrWhiteSpace(request.Reason))
+                {
+                    return BadRequest("Failure reason is required.");
+                }
+
+                await _driverRepository.MarkShipmentAsFailedDeliveryAsync(
+                    driverId,
+                    shipmentId,
+                    request.Reason
+                );
+
+                return NoContent();
+         }
     }
 }

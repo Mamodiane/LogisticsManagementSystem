@@ -157,5 +157,32 @@ namespace LogisticsManagementSystem.Repositories
 
             await _context.ShipmentStatusHistories.AddAsync(history);
         }
+
+        //
+        public async Task MarkShipmentAsFailedDeliveryAsync(int driverId, int shipmentId, string reason)
+        {
+            var shipment = await _context.Shipments
+                .FirstOrDefaultAsync(s => s.Id == shipmentId && s.DriverId == driverId);
+
+            if (shipment == null)
+            {
+                throw new KeyNotFoundException("Shipment not found or not assigned to this driver.");
+            }
+
+            if (shipment.Status != ShipmentStatus.InTransit)
+            {
+                throw new InvalidOperationException("Shipment can only be marked as Failed Delivery when it is InTransit.");
+            }
+
+            shipment.Status = ShipmentStatus.FailedDelivery;
+
+            await AddStatusHistoryAsync(
+                shipment.Id,
+                shipment.Status,
+                $"Failed delivery: {reason}"
+            );
+
+            await _context.SaveChangesAsync();
+        }
     }
 }
