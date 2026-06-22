@@ -17,5 +17,7 @@ namespace LogisticsManagementSystem.Data
         public DbSet<AddressChangeRequest> AddressChangeRequests { get; set; }
 
         public DbSet<DeliveryProof> DeliveryProofs { get; set; }
+
+        public DbSet<ApplicationUser> Users { get; set; }
     }
 }

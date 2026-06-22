@@ -14,6 +14,10 @@ namespace LogisticsManagementSystem.Models
 
         public bool IsAvailable { get; set; } = true;
 
+        public int? ApplicationUserId { get; set; }
+
+        public ApplicationUser? ApplicationUser { get; set; }
+
         [JsonIgnore]
         public ICollection<Shipment> Shipments { get; set; } = new List<Shipment>();
     }
