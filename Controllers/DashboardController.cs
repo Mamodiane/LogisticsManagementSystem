@@ -3,11 +3,13 @@ using LogisticsManagementSystem.DTOs;
 using LogisticsManagementSystem.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LogisticsManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
     [ApiController]
+    [Route("api/[controller]")]
     public class DashboardController : ControllerBase
     {
         private readonly AppDbContext _context;
