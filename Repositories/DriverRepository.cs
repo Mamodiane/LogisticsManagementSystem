@@ -1,7 +1,8 @@
 using LogisticsManagementSystem.Data;
+using LogisticsManagementSystem.DTOs;
+using LogisticsManagementSystem.Enums;
 using LogisticsManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
-using LogisticsManagementSystem.Enums;
 
 namespace LogisticsManagementSystem.Repositories
 {
@@ -207,6 +208,52 @@ namespace LogisticsManagementSystem.Repositories
                 shipment.Id,
                 shipment.Status,
                 $"Driver {driverId} marked shipment as Returned"
+            );
+
+            await _context.SaveChangesAsync();
+        }
+        // Add delivery proof after marking as delivered
+        public async Task AddDeliveryProofAsync(
+    int driverId,
+    int shipmentId,
+    CreateDeliveryProofDto request)
+        {
+            var shipment = await _context.Shipments
+                .FirstOrDefaultAsync(s => s.Id == shipmentId && s.DriverId == driverId);
+
+            if (shipment == null)
+            {
+                throw new KeyNotFoundException("Shipment not found or not assigned to this driver.");
+            }
+
+            if (shipment.Status != ShipmentStatus.Delivered)
+            {
+                throw new InvalidOperationException("Delivery proof can only be added after shipment is Delivered.");
+            }
+
+            var existingProof = await _context.DeliveryProofs
+                .FirstOrDefaultAsync(p => p.ShipmentId == shipmentId);
+
+            if (existingProof != null)
+            {
+                throw new InvalidOperationException("Delivery proof already exists for this shipment.");
+            }
+
+            var deliveryProof = new DeliveryProof
+            {
+                ShipmentId = shipment.Id,
+                ReceiverName = request.ReceiverName,
+                SignatureName = request.SignatureName,
+                Notes = request.Notes,
+                DeliveredAt = DateTime.UtcNow
+            };
+
+            await _context.DeliveryProofs.AddAsync(deliveryProof);
+
+            await AddStatusHistoryAsync(
+                shipment.Id,
+                shipment.Status,
+                $"Delivery proof submitted. Received by {request.ReceiverName}"
             );
 
             await _context.SaveChangesAsync();

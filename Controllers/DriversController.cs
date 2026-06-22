@@ -121,5 +121,27 @@ namespace LogisticsManagementSystem.Controllers
             await _driverRepository.MarkShipmentAsReturnedAsync(driverId, shipmentId);
             return NoContent();
         }
+
+        // Add delivery proof
+        [HttpPost("{driverId}/shipments/{shipmentId}/delivery-proof")]
+        public async Task<IActionResult> AddDeliveryProof(
+    int driverId,
+    int shipmentId,
+    CreateDeliveryProofDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request.ReceiverName))
+            {
+                return BadRequest("Receiver name is required.");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.SignatureName))
+            {
+                return BadRequest("Signature name is required.");
+            }
+
+            await _driverRepository.AddDeliveryProofAsync(driverId, shipmentId, request);
+
+            return NoContent();
+        }
     }
 }

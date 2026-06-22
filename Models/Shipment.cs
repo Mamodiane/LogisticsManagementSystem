@@ -48,5 +48,6 @@ namespace LogisticsManagementSystem.Models
 
         public ICollection<AddressChangeRequest> AddressChangeRequests { get; set; }
     = new List<AddressChangeRequest>();
+        public DeliveryProof? DeliveryProof { get; set; }
     }
 }

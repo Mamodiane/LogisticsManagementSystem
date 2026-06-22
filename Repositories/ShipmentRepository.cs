@@ -24,6 +24,8 @@ namespace LogisticsManagementSystem.Repositories
             return await _context.Shipments
                 .Include(s => s.Driver)
                 .Include(s => s.StatusHistory)
+                .Include(s => s.AddressChangeRequests)
+                .Include(s => s.DeliveryProof)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 

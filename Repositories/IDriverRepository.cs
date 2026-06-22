@@ -1,3 +1,4 @@
+using LogisticsManagementSystem.DTOs;
 using LogisticsManagementSystem.Models;
 
 namespace LogisticsManagementSystem.Repositories
@@ -23,5 +24,7 @@ namespace LogisticsManagementSystem.Repositories
 
         // Mark shipment as returned
         Task MarkShipmentAsReturnedAsync(int driverId, int shipmentId);
+
+        Task AddDeliveryProofAsync(int driverId,int shipmentId,CreateDeliveryProofDto request);
     }
 }

@@ -15,5 +15,7 @@ namespace LogisticsManagementSystem.Data
         public DbSet<Driver> Drivers { get; set; }
         //
         public DbSet<AddressChangeRequest> AddressChangeRequests { get; set; }
+
+        public DbSet<DeliveryProof> DeliveryProofs { get; set; }
     }
 }
