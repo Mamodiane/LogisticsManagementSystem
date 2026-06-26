@@ -4,6 +4,7 @@ using LogisticsManagementSystem.Enums;
 using LogisticsManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LogisticsManagementSystem.Controllers
 {
@@ -47,6 +48,7 @@ namespace LogisticsManagementSystem.Controllers
             return Ok(addressRequest);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("pending")]
         public async Task<IActionResult> GetPendingRequests()
         {
@@ -57,6 +59,7 @@ namespace LogisticsManagementSystem.Controllers
             return Ok(requests);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/approve")]
         public async Task<IActionResult> ApproveRequest(int id, ReviewAddressChangeRequestDto request)
         {
@@ -93,6 +96,7 @@ namespace LogisticsManagementSystem.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}/reject")]
         public async Task<IActionResult> RejectRequest(int id, ReviewAddressChangeRequestDto request)
         {

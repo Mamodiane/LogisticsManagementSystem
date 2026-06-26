@@ -3,6 +3,7 @@ using LogisticsManagementSystem.DTOs;
 using LogisticsManagementSystem.Enums;
 using LogisticsManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using LogisticsManagementSystem.Enums;
 
 namespace LogisticsManagementSystem.Repositories
 {
@@ -255,6 +256,38 @@ namespace LogisticsManagementSystem.Repositories
                 shipment.Status,
                 $"Delivery proof submitted. Received by {request.ReceiverName}"
             );
+
+            await _context.SaveChangesAsync();
+        }
+        // Get driver by application user id
+        public async Task<Driver?> GetDriverByApplicationUserIdAsync(int applicationUserId)
+        {
+            return await _context.Drivers
+                .FirstOrDefaultAsync(d => d.ApplicationUserId == applicationUserId);
+        }
+        // Link a driver profile to an application user
+        public async Task LinkDriverToUserAsync(int driverId, int applicationUserId)
+        {
+            var driver = await _context.Drivers.FindAsync(driverId);
+
+            if (driver == null)
+            {
+                throw new KeyNotFoundException("Driver not found.");
+            }
+
+            var user = await _context.Users.FindAsync(applicationUserId);
+
+            if (user == null)
+            {
+                throw new KeyNotFoundException("User not found.");
+            }
+
+            if (user.Role != UserRole.Driver)
+            {
+                throw new InvalidOperationException("Only users with Driver role can be linked to a driver profile.");
+            }
+
+            driver.ApplicationUserId = applicationUserId;
 
             await _context.SaveChangesAsync();
         }

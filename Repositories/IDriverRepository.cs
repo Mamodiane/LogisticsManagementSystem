@@ -26,5 +26,8 @@ namespace LogisticsManagementSystem.Repositories
         Task MarkShipmentAsReturnedAsync(int driverId, int shipmentId);
 
         Task AddDeliveryProofAsync(int driverId,int shipmentId,CreateDeliveryProofDto request);
+        Task<Driver?> GetDriverByApplicationUserIdAsync(int applicationUserId);
+
+        Task LinkDriverToUserAsync(int driverId, int applicationUserId);
     }
 }

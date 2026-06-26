@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using LogisticsManagementSystem.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace LogisticsManagementSystem.Controllers
 {
@@ -79,6 +81,22 @@ namespace LogisticsManagementSystem.Controllers
             var hash = sha256.ComputeHash(bytes);
 
             return Convert.ToBase64String(hash);
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult GetCurrentUser()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            return Ok(new CurrentUserDto
+            {
+                Id = int.Parse(userId!),
+                Email = email!,
+                Role = role!
+            });
         }
     }
 }

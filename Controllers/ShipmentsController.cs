@@ -1,9 +1,11 @@
 using LogisticsManagementSystem.Models;
 using LogisticsManagementSystem.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LogisticsManagementSystem.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class ShipmentsController : ControllerBase

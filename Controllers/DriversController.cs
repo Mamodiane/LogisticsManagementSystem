@@ -2,6 +2,9 @@ using LogisticsManagementSystem.Models;
 using LogisticsManagementSystem.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using LogisticsManagementSystem.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using LogisticsManagementSystem.DTOs;
 
 namespace LogisticsManagementSystem.Controllers
 {
@@ -16,6 +19,7 @@ namespace LogisticsManagementSystem.Controllers
             _driverRepository = driverRepository;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Driver>>> GetAllDrivers()
         {
@@ -23,6 +27,7 @@ namespace LogisticsManagementSystem.Controllers
             return Ok(drivers);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<Driver>> GetDriverById(int id)
         {
@@ -45,6 +50,7 @@ namespace LogisticsManagementSystem.Controllers
             return Ok(shipments);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Driver>> CreateDriver(Driver driver)
         {
@@ -52,6 +58,7 @@ namespace LogisticsManagementSystem.Controllers
             return Ok(driver);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateDriver(int id, Driver driver)
         {
@@ -64,6 +71,7 @@ namespace LogisticsManagementSystem.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDriver(int id)
         {
@@ -72,6 +80,7 @@ namespace LogisticsManagementSystem.Controllers
         }
 
         // Mark shipment as collected
+        [Authorize(Roles = "Admin,Driver")]
         [HttpPut("{driverId}/shipments/{shipmentId}/collect")]
         public async Task<IActionResult> MarkShipmentAsCollected(int driverId, int shipmentId)
         {
@@ -79,6 +88,7 @@ namespace LogisticsManagementSystem.Controllers
             return NoContent();
         }
         // Mark shipment as in transit
+        [Authorize(Roles = "Admin,Driver")]
         [HttpPut("{driverId}/shipments/{shipmentId}/in-transit")]
         public async Task<IActionResult> MarkShipmentAsInTransit(int driverId, int shipmentId)
         {
@@ -86,6 +96,7 @@ namespace LogisticsManagementSystem.Controllers
             return NoContent();
         }
         // Mark shipment as delivered
+        [Authorize(Roles = "Admin,Driver")]
         [HttpPut("{driverId}/shipments/{shipmentId}/deliver")]
         public async Task<IActionResult> MarkShipmentAsDelivered(int driverId, int shipmentId)
         {
@@ -94,6 +105,7 @@ namespace LogisticsManagementSystem.Controllers
         }
 
         //
+        [Authorize(Roles = "Admin,Driver")]
         [HttpPut("{driverId}/shipments/{shipmentId}/fail")]
         public async Task<IActionResult> MarkShipmentAsFailedDelivery(
         int driverId,
@@ -115,6 +127,7 @@ namespace LogisticsManagementSystem.Controllers
          }
 
         //
+        [Authorize(Roles = "Admin,Driver")]
         [HttpPut("{driverId}/shipments/{shipmentId}/return")]
         public async Task<IActionResult> MarkShipmentAsReturned(int driverId, int shipmentId)
         {
@@ -123,6 +136,7 @@ namespace LogisticsManagementSystem.Controllers
         }
 
         // Add delivery proof
+        [Authorize(Roles = "Admin,Driver")]
         [HttpPost("{driverId}/shipments/{shipmentId}/delivery-proof")]
         public async Task<IActionResult> AddDeliveryProof(
     int driverId,
@@ -140,6 +154,48 @@ namespace LogisticsManagementSystem.Controllers
             }
 
             await _driverRepository.AddDeliveryProofAsync(driverId, shipmentId, request);
+
+            return NoContent();
+        }
+        // Get shipments assigned to the currently authenticated driver
+        [Authorize(Roles = "Driver")]
+        [HttpGet("my-shipments")]
+        public async Task<IActionResult> GetMyShipments()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+
+            var applicationUserId = int.Parse(userIdClaim);
+
+            var driver = await _driverRepository
+                .GetDriverByApplicationUserIdAsync(applicationUserId);
+
+            if (driver == null)
+            {
+                return NotFound("No driver profile linked to this user account.");
+            }
+
+            var shipments = await _driverRepository
+                .GetAssignedShipmentsAsync(driver.Id);
+
+            return Ok(shipments);
+        }
+
+        // Link driver to user account
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{driverId}/link-user")]
+        public async Task<IActionResult> LinkDriverToUser(
+    int driverId,
+    LinkDriverUserDto request)
+        {
+            await _driverRepository.LinkDriverToUserAsync(
+                driverId,
+                request.ApplicationUserId
+            );
 
             return NoContent();
         }

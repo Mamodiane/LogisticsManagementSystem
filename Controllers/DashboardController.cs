@@ -4,12 +4,14 @@ using LogisticsManagementSystem.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LogisticsManagementSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
+    
     public class DashboardController : ControllerBase
     {
         private readonly AppDbContext _context;
