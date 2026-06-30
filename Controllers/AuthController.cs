@@ -1,13 +1,14 @@
 ﻿using LogisticsManagementSystem.Data;
 using LogisticsManagementSystem.DTOs;
+using LogisticsManagementSystem.Enums;
 using LogisticsManagementSystem.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
 using LogisticsManagementSystem.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace LogisticsManagementSystem.Controllers
 {
@@ -97,6 +98,63 @@ namespace LogisticsManagementSystem.Controllers
                 Email = email!,
                 Role = role!
             });
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("pending-drivers")]
+        public async Task<IActionResult> GetPendingDrivers()
+        {
+            var pendingDrivers = await _context.Users
+                .Where(u => u.Role == UserRole.Driver && u.Status == UserStatus.Pending)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.FirstName,
+                    u.LastName,
+                    u.Email,
+                    u.Role,
+                    u.Status,
+                    u.CreatedDate
+                })
+                .ToListAsync();
+
+            return Ok(pendingDrivers);
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("approve-driver/{userId}")]
+        public async Task<IActionResult> ApproveDriver(
+    int userId,
+    ApproveDriverRequestDto request)
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found.");
+
+            if (user.Role != UserRole.Driver)
+                return BadRequest("Only Driver users can be approved as drivers.");
+
+            if (user.Status != UserStatus.Pending)
+                return BadRequest("Only pending drivers can be approved.");
+
+            var driver = new Driver
+            {
+                FullName = $"{user.FirstName} {user.LastName}",
+                PhoneNumber = request.PhoneNumber,
+                LicenseNumber = request.LicenseNumber,
+                IsAvailable = request.IsAvailable,
+                ApplicationUserId = user.Id
+            };
+
+            await _context.Drivers.AddAsync(driver);
+
+            user.Status = UserStatus.Active;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Driver approved successfully.");
         }
     }
 }

@@ -17,5 +17,7 @@ namespace LogisticsManagementSystem.Models
         public UserRole Role { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+
+        public UserStatus Status { get; set; } = UserStatus.Pending;
     }
 }
